@@ -1,0 +1,15 @@
+{
+    "name": "new-hd-films",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node ./bin/www"
+    },
+    "dependencies": {
+        "express":          "~4.2.0",
+        "ejs":              "~0.8.5",
+        "connect":          ">=2",
+        "nconf":            "~0.6.9",
+        "winston":          "~0.7.3"
+    }
+}

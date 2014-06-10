@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+//set default environment as development
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+var config = require('../config');
+var logger = require('../libs/log')(module);
+var app = require('../app');
+
+app.set('port', process.env.PORT || config.defaultPort);
+
+var server = app.listen(app.get('port'), function() {
+  logger.info('Express server listening on port ' + server.address().port);
+});

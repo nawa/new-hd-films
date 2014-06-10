@@ -1,0 +1,11 @@
+{
+    "development":{
+        "defaultPort" : 3000,
+        "title" : "New HD films"
+    },
+
+    "production" : {
+        "defaultPort" : 80,
+        "title" : "New HD films"
+    }
+}
