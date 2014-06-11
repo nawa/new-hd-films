@@ -3,6 +3,7 @@ var connect = require('connect');
 var path = require('path');
 var config = require('./config');
 var routes = require('./routes/index');
+var serviceRoutes = require('./routes/service');
 var logger = require("./libs/log")(module);
 
 var app = express();
@@ -30,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'thirdparty')));
 
 app.use('/', routes);
+app.use('/service', serviceRoutes);
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {

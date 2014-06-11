@@ -6,3 +6,29 @@ body {
 a {
   color: #00B7FF;
 }
+
+div.dataTables_paginate {
+    float: right;
+    margin: 0;
+}
+
+div.dataTables_paginate ul.pagination {
+    margin: 2px 0;
+    white-space: nowrap;
+}
+
+table.dataTable {
+    clear: both;
+    margin-bottom: 6px !important;
+    margin-top: 6px !important;
+    max-width: none !important;
+}
+
+table.dataTable thead > tr > th {
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+div.dataTables_info {
+    padding-top: 8px;
+}

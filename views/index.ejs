@@ -5,6 +5,12 @@
     <link rel="stylesheet" href="/bootflat/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="/bootflat/css/bootflat.css">
     <link rel='stylesheet' href='/stylesheets/style.css'/>
+
+    <script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
+    <!--<script type="text/javascript" language="javascript" src="/datatables/js/dataTables.bootstrap.js"></script>-->
+    <script type="text/javascript" language="javascript" src="/datatables/js/jquery-DT-pagination.js"></script>
+    <script type="text/javascript" language="javascript" src="/javascripts/index.js"></script>
 </head>
 <body>
 <div class="container">
@@ -27,18 +33,26 @@
     <div class="row">
         <div class="panel panel-default">
             <!--<div class="panel-heading">Panel heading</div>-->
-            <table class="table">
-                <tr>
-                    <td>1</td>
-                    <td>Text 1</td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Text 2</td>
-                </tr>
+            <table id="films-table" class="table">
+                <thead>
+                    <tr>
+                        <th>Col 1</th>
+                        <th>Col 2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Text 1</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Text 2</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
-        <div class="col-md-12 text-center">
+        <!--<div class="col-md-12 text-center">
             <ul class="pagination">
                 <li class="active"><a href="#">PREV</a></li>
                 <li><a href="#">1</a></li>
@@ -48,7 +62,7 @@
                 <li class="disabled"><a href="#">5</a></li>
                 <li class="active"><a href="#">NEXT</a></li>
             </ul>
-        </div>
+        </div>-->
     </div>
 </div>
 <!--<h1><%= title %></h1>
