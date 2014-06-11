@@ -24,7 +24,10 @@ if (app.get('env') === 'development') {
 app.use(connect.json());
 app.use(connect.urlencoded());
 app.use(connect.cookieParser());
+
+//TODO use minified for production
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'thirdparty')));
 
 app.use('/', routes);
 
