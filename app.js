@@ -4,7 +4,8 @@ var path = require('path');
 var config = require('./config');
 var routes = require('./routes/index');
 var serviceRoutes = require('./routes/service');
-var logger = require("./libs/log")(module);
+var logger = require('./libs/log')(module);
+var dataCollector = require('./libs/data-collector')
 
 var app = express();
 connect.errorHandler.title = config.title;
@@ -62,5 +63,7 @@ app.use(function(err, req, res, next) {
         logger.error(stack);
     }
 });
+
+dataCollector.updateData();
 
 module.exports = app;

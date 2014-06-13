@@ -1,11 +1,27 @@
 {
     "development":{
-        "defaultPort" : 3000,
-        "title" : "New HD films"
+        "defaultPort": 3000,
+        "cinemahdFirstCount": 20,
+        "title": "New HD films",
+        "minRating": 7,
+        "minVotes": 3000,
+        "mongoose": {
+            "uri": "mongodb://localhost/newHdFilms",
+            "options": {
+                "server": {
+                    "socketOptions": {
+                        "keepAlive": 1
+                    }
+                }
+            }
+        }
     },
 
     "production" : {
         "defaultPort" : 80,
-        "title" : "New HD films"
+        "cinemahdFirstCount": 10,
+        "title" : "New HD films",
+        "minRating": 7,
+        "minVotes": 3000
     }
 }

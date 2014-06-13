@@ -3,6 +3,7 @@
 //set default environment as development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
+var encoding_fix = require('../libs/encoding-fix');
 var config = require('../config');
 var logger = require('../libs/log')(module);
 var app = require('../app');
