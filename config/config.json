@@ -5,6 +5,7 @@
         "title": "New HD films",
         "minRating": 7,
         "minVotes": 3000,
+        "minYear": 2012,
         "mongoose": {
             "uri": "mongodb://localhost/newHdFilms",
             "options": {
@@ -22,6 +23,7 @@
         "cinemahdFirstCount": 10,
         "title" : "New HD films",
         "minRating": 7,
-        "minVotes": 3000
+        "minVotes": 3000,
+        "minYear": 2012
     }
 }

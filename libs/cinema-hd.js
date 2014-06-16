@@ -7,8 +7,7 @@ var request = require('request'),
 const CINEMA_HD_URL = 'http://cinema-hd.ru/board/';
 const KINOPOISK_FILM_URL = 'http://www.kinopoisk.ru/film/';
 
-var getFilmsFromPage = function (page, callback) {
-    //log.error(CINEMA_HD_URL + '0-' + page);
+var getFilmsFromPage = function (page, lastSyncDate, lastSyncEntry, callback) {
     request(CINEMA_HD_URL + '0-' + page, function (err, response, body) {
         if (err) throw err;
         if (!err && response.statusCode == 200) {
@@ -25,11 +24,14 @@ var getFilmsFromPage = function (page, callback) {
                             if(film.rating){
                                 film.img = filmElement.find(".eMessage img").attr('src');
                             }
+                            //get post date from cinema-hd
+                            if(film.rating){
+
+                            }
                             mapCallback(null, film);
                         });
                     })(kinopoiskId, filmElement);
                 }else{
-                    //log.info('Rating for entry ' + filmElement.attr('id') + ' not found');
                     mapCallback(null, film);
                 }
             }, function(err, result){
@@ -88,16 +90,31 @@ var fillFilmFromKinopoiskId = function(film, kinopoiskId, callback){
                 var rating = parseFloat(ratingS);
                 var votes = parseFloat(votesS);
                 if(rating >= config.minRating && votes >= config.minVotes){
-                    film.rating = rating;
-                    film.votes = votes;
-                    film.title = $('#headerFilm .moviename-big').text();
-                    film.alternativeTitle = $('#headerFilm span[itemprop="alternativeHeadline"]').text();
-                    film.description = $('.brand_words[itemprop="description"]').text();
+                    var year = parseYear($);
+                    if(year >= config.minYear){
+                        film.year = year;
+                        film.rating = rating;
+                        film.votes = votes;
+                        film.title = $('#headerFilm .moviename-big').text();
+                        film.alternativeTitle = $('#headerFilm span[itemprop="alternativeHeadline"]').text();
+                        film.description = $('.brand_words[itemprop="description"]').text();
+                    }
                 }
             }
         }
         callback();
     });
 };
+
+var parseYear = function($){
+    try{
+        var yearTd = $('#infoTable table.info tr td');
+        if(yearTd[0].children.length > 0 && yearTd[0].children[0].data == 'год'){
+            return parseInt($(yearTd[1]).find('a').text());
+        }
+    }catch (e){
+        return;
+    }
+}
 
 module.exports.getFilmsFromPage = getFilmsFromPage;

@@ -9,7 +9,8 @@ var filmSchema = new Schema({
     alternativeTitle: String,
     description: String,
     rating: Number,
-    votes: Number
+    votes: Number,
+    year: Number
 });
 
 exports.Film = mongoose.model('film', filmSchema);
