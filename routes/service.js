@@ -1,25 +1,28 @@
 var express = require('express');
 var router = express.Router();
+var Film = require('../model/film').Film;
 
 router.post('/data', function (req, res) {
     var start = parseInt(req.body.start);
     var end = parseInt(req.body.length) + start;
-    var result = receiveData(start, end);
-    result['draw'] = req.body.draw;
-    res.json(result);
+    receiveData(start, end, function(err, results){
+        if(err) throw err;
+        results['draw'] = req.body.draw;
+        res.json(results);
+    });
 });
 
-var all_data = [];
-for(var i = 0; i < 1000; i++){
-    all_data.push([i + '_1', i + '_2'])
-}
-
-receiveData = function(start, end){
-    var data = all_data.slice(start, end);
-    return {
-        'recordsTotal': all_data.length,
-        'recordsFiltered': all_data.length,
-        'data': data};
+receiveData = function(start, end, callback){
+    Film.find({}, function(err, docs){
+        if(err){
+            callback(err);
+        }else{
+            callback(null, {
+                'recordsTotal': docs.length,
+                'recordsFiltered': docs.length,
+                'data': docs});
+        }
+    });
 }
 
 module.exports = router;

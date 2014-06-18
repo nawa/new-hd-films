@@ -5,7 +5,8 @@ var async = require('async');
 var log = require('./log')(module);
 var mongoose = require('./mongoose');
 var Film = require('../model/film').Film;
-var SyncInfo = require('../model/film').SyncInfo;
+var SyncInfo = require('../model/sync-info').SyncInfo;
+var kinopoisk = require('../libs/kinopoisk-ru');
 
 //every day
 new cronJob('0 0 0 * * *', function(){
@@ -14,39 +15,75 @@ new cronJob('0 0 0 * * *', function(){
 }, null, true);
 
 var updateData = function () {
-    //TODO change to check with mongo
-    if (true) {
-        //TODO remove that
-        Film.remove().exec();
-        /*SyncInfo.findOne({}, function(err, thor) {
-            if (err) return console.error(err);
-            console.dir(thor);
-        });*/
-        //-------------
-        var series = [];
-        for (var page = 1; page <= config.cinemahdFirstCount; page++) {
-            (function (page) {
-                series.push(function (callback) {
-                    cinema_hd.getFilmsFromPage(page, function (err, result) {
-                        for (var i = 0; i < result.length; i++) {
-                            var film = result[i];
-                            (function (film) {
-                                film.save(function (err, saved) {
-                                    if (err) throw err;//handle error
-                                    log.info('Film with id ' + film.kinopoisk_id + ' successfully saved to db');
-                                });
-                            }(film));
-                        }
-                        log.info(page / config.cinemahdFirstCount * 100 + '%');
-                        callback(null);
-                    });
-                });
-            })(page);
+    SyncInfo.findOne({}, function(err, syncInfo) {
+        if (err) return log.error(err);
+        var lastSyncDate;
+        var lastSyncEntry;
+        if(syncInfo){
+            lastSyncDate = syncInfo.lastDate;
+            lastSyncEntry = syncInfo.lastEntry;
         }
-        async.series(series, function (err, result) {
-            log.info('Synchronization finished');
-        });
-    }
+        var startPage = 1;
+        cinema_hd.getFirstEntryInfo(startPage, function(firstEntryId, firstEntryDate){
+            var series = [];
+            for (var page = startPage; page <= config.cinemahdFirstCount; page++) {
+                (function (page) {
+                    //processInterrupted = true - next entries alredy synchronized earlier
+                    series.push(function (processInterrupted, seriesCallResult, callback) {
+                        //first call
+                        if(typeof processInterrupted == 'function'){
+                            callback = processInterrupted;
+                            processInterrupted = false;
+                            seriesCallResult = [];
+                        }
+                        if(!processInterrupted){
+                            cinema_hd.getFilmsFromPage(page, lastSyncDate, lastSyncEntry, function (err, pageContainsAlreadySynchronizedEntry, result) {
+                                if(err) callback(err);
+                                for (var i = 0; i < result.length; i++) {
+                                    seriesCallResult.push(result[i]);
+                                }
+                                log.info(page / config.cinemahdFirstCount * 100 + '%');
+                                callback(null, pageContainsAlreadySynchronizedEntry, seriesCallResult);
+                            });
+                        }else{
+                            callback(null, processInterrupted, seriesCallResult);
+                        }
+                    });
+                })(page);
+            }
+            async.waterfall(series, function (err, processInterrupted, seriesCallResult) {
+                if(err) log.error(err);
+                var finished = function(){
+                    if(!syncInfo){
+                        syncInfo = new SyncInfo();
+                    }
+                    syncInfo.lastEntry = firstEntryId;
+                    syncInfo.lastDate = firstEntryDate;
+                    syncInfo.save(function(err){
+                        if (err) throw err;
+                        log.info('Synchronization finished');
+                    });
+                };
+                if(seriesCallResult.length > 0){
+                    for (var i = 0; i < seriesCallResult.length; i++) {
+                        var film = seriesCallResult[i];
+                        (function (film, i) {
+                            film.save(function (err, saved) {
+                                if (err) throw err;//handle error
+                                log.info('Film with id ' + film.kinopoisk_id + ' successfully saved to db');
+                                if(i == seriesCallResult.length - 1){
+                                    finished();
+                                }
+                            });
+                        }(film, i));
+                    }
+                }else{
+                    finished();
+                }
+            });
+        })
+    });
+
 };
 
 module.exports.updateData = updateData;

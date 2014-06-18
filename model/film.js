@@ -14,3 +14,12 @@ var filmSchema = new Schema({
 });
 
 exports.Film = mongoose.model('film', filmSchema);
+exports.Film.prototype.fillFilmFromKinopoisk = function(kinopoiskFilm){
+    this.kinopoisk_id = kinopoiskFilm.id,
+    this.title = kinopoiskFilm.title;
+    this.year = kinopoiskFilm.year;
+    this.rating = kinopoiskFilm.rating;
+    this.votes = kinopoiskFilm.votes;
+    this.alternativeTitle = kinopoiskFilm.alternativeTitle;
+    this.description = kinopoiskFilm.description;
+};

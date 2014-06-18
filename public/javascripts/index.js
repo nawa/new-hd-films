@@ -16,7 +16,13 @@
                     "targets": 0,
                     "data": null,
                     "render": function (data, type, full, meta) {
-                        return 'Cell1: ' + data[0];
+                        return  '<div class="row">' +
+                                '  <div class="col-xs-6 col-md-3">' +
+                                '    <a href="http://www.kinopoisk.ru/film/' + data.kinopoisk_id +'" class="thumbnail">' +
+                                '      <img src="' + data.img +'" alt="...">' +
+                                '    </a>' +
+                                '  </div>' +
+                                '</div>';
                     }
                 },
 
@@ -24,6 +30,7 @@
                     "targets": 1,
                     "data": null,
                     "render": function (data, type, full, meta) {
+                        debugger;
                         return 'Cell2: ' + data[1];
                     }
                 }
