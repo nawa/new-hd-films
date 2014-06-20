@@ -11,6 +11,8 @@ var envDependentConfig = nconf.get(ENV);
 //load secret data from environment variables
 envDependentConfig.kinopoiskUser = nconf.get('kinopoiskUser');
 envDependentConfig.kinopoiskPassword = nconf.get('kinopoiskPassword');
-envDependentConfig.mongoUser = nconf.get('mongoUser');
-envDependentConfig.mongoPassword = nconf.get('mongoPassword');
+if(nconf.get('MONGOLAB_URI')){
+    envDependentConfig.mongoose.uri = nconf.get('MONGOLAB_URI');
+}
+
 module.exports = envDependentConfig;

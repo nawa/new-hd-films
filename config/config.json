@@ -20,10 +20,21 @@
 
     "production" : {
         "defaultPort" : 80,
-        "cinemahdFirstCount": 10,
-        "title" : "New HD films",
+        "cinemahdFirstCount": 50,
+        "title" : "New HD films (prod)",
         "minRating": 7,
         "minVotes": 3000,
-        "minYear": 2012
+        "minYear": 2012,
+        "mongoose": {
+            //will be filled from env
+            //"uri": '',
+            "options": {
+                "server": {
+                    "socketOptions": {
+                        "keepAlive": 1
+                    }
+                }
+            }
+        }
     }
 }
