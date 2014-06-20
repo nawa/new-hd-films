@@ -3,6 +3,7 @@ var Schema = mongoose.Schema;
 
 var filmSchema = new Schema({
     cinema_hd_id:  String,
+    cinema_hd_date:  String,
     kinopoisk_id: String,
     img: String, //from cinema-hd
     title: String,

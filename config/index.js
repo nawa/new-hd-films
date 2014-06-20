@@ -7,4 +7,10 @@ nconf.argv()
     .env()
     .file({file: path.join(__dirname, 'config.json')});
 
-module.exports = nconf.get(ENV);
+var envDependentConfig = nconf.get(ENV);
+//load secret data from environment variables
+envDependentConfig.kinopoiskUser = nconf.get('kinopoiskUser');
+envDependentConfig.kinopoiskPassword = nconf.get('kinopoiskPassword');
+envDependentConfig.mongoUser = nconf.get('mongoUser');
+envDependentConfig.mongoPassword = nconf.get('mongoPassword');
+module.exports = envDependentConfig;
