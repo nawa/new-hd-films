@@ -1,12 +1,13 @@
 (function ($) {
     $(window).load(function () {
         $('#films-table').dataTable({
-            'bSort': true,       // Disable sorting
-            'iDisplayLength': 10,   //records per page
+            'iDisplayLength': 5,   //records per page
             'sDom': "t<'row'<'col-md-6'i><'col-md-6'p>>",
             'sPaginationType': 'bootstrap',
             'processing': true,
             'serverSide': true,
+            'aaSorting': [],
+            "autoWidth": false,
             'ajax': {
                 'url': '/service/data',
                 'type': 'POST'
@@ -15,23 +16,49 @@
                 {
                     "targets": 0,
                     "data": null,
+                    "sWidth": "25%",
+                    "bSortable": false,
                     "render": function (data, type, full, meta) {
-                        return  '<div class="row">' +
-                                '  <div class="col-xs-6 col-md-3">' +
+                        return  '<div style="max-width:300px">' +
                                 '    <a href="http://www.kinopoisk.ru/film/' + data.kinopoisk_id +'" class="thumbnail">' +
-                                '      <img src="' + data.img +'" alt="...">' +
+                                '      <img class="img-responsive" src="' + data.img +'" alt="...">' +
                                 '    </a>' +
-                                '  </div>' +
+                                '   <h4 class="text-center">' + data.title + '</h4>' +
+                                '   <div class="text-center">' + data.alternativeTitle + '</div>' +
                                 '</div>';
                     }
                 },
-
                 {
                     "targets": 1,
                     "data": null,
+                    "sWidth": "50%",
+                    "bSortable": false,
                     "render": function (data, type, full, meta) {
-                        debugger;
-                        return 'Cell2: ' + data[1];
+                        return data.description;
+                    }
+                },
+                {
+                    "targets": 2,
+                    "data": null,
+                    "bSortable": true,
+                    "render": function (data, type, full, meta) {
+                        return '<div class="text-center">' + data.year + '</div>';
+                    }
+                },
+                {
+                    "targets": 3,
+                    "data": null,
+                    "bSortable": true,
+                    "render": function (data, type, full, meta) {
+                        return '<div class="text-center">' + data.rating + '</div>';
+                    }
+                },
+                {
+                    "targets": 4,
+                    "data": null,
+                    "bSortable": true,
+                    "render": function (data, type, full, meta) {
+                        return '<div class="text-center">' + data.votes + '</div>';
                     }
                 }
             ]

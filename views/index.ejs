@@ -4,6 +4,7 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="/bootflat/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="/bootflat/css/bootflat.css">
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.10.0/css/jquery.dataTables.css">
     <link rel='stylesheet' href='/stylesheets/style.css'/>
 
     <script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -31,27 +32,22 @@
         </div>
     </nav>
     <div class="row">
-        <div class="panel panel-default">
+        <!--<div class="panel panel-default">-->
             <!--<div class="panel-heading">Panel heading</div>-->
             <table id="films-table" class="table">
                 <thead>
                     <tr>
-                        <th>Col 1</th>
-                        <th>Col 2</th>
+                        <th class="text-center">Название</th>
+                        <th class="text-center">Описание</th>
+                        <th class="text-center" style="cursor: pointer">Год</th>
+                        <th class="text-center" style="cursor: pointer">Рейтинг</th>
+                        <th class="text-center" style="cursor: pointer">Голоса</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Text 1</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Text 2</td>
-                    </tr>
                 </tbody>
             </table>
-        </div>
+        <!--</div>-->
         <!--<div class="col-md-12 text-center">
             <ul class="pagination">
                 <li class="active"><a href="#">PREV</a></li>
