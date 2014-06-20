@@ -1,7 +1,7 @@
 {
     "development":{
         "defaultPort": 3000,
-        "cinemahdFirstCount": 100,
+        "cinemahdFirstCount": 1000,
         "title": "New HD films",
         "minRating": 7,
         "minVotes": 3000,
@@ -20,8 +20,8 @@
 
     "production" : {
         "defaultPort" : 80,
-        "cinemahdFirstCount": 50,
-        "title" : "New HD films (prod)",
+        "cinemahdFirstCount": 100,
+        "title" : "New HD films",
         "minRating": 7,
         "minVotes": 3000,
         "minYear": 2012,
