@@ -26,8 +26,6 @@
         "minVotes": 3000,
         "minYear": 2012,
         "mongoose": {
-            //will be filled from env
-            //"uri": '',
             "options": {
                 "server": {
                     "socketOptions": {
