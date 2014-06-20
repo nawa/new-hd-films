@@ -19,7 +19,7 @@
                     "sWidth": "25%",
                     "bSortable": false,
                     "render": function (data, type, full, meta) {
-                        return  '<div style="max-width:300px">' +
+                        return  '<div>' +
                                 '    <a href="http://www.kinopoisk.ru/film/' + data.kinopoisk_id +'" class="thumbnail">' +
                                 '      <img class="img-responsive" src="' + data.img +'" alt="...">' +
                                 '    </a>' +

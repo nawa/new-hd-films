@@ -8,61 +8,44 @@
     <link rel='stylesheet' href='/stylesheets/style.css'/>
 
     <script type="text/javascript" language="javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" language="javascript" src="http://cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
-    <!--<script type="text/javascript" language="javascript" src="/datatables/js/dataTables.bootstrap.js"></script>-->
+    <script type="text/javascript" language="javascript"
+            src="http://cdn.datatables.net/1.10.0/js/jquery.dataTables.js"></script>
     <script type="text/javascript" language="javascript" src="/datatables/js/jquery-DT-pagination.js"></script>
     <script type="text/javascript" language="javascript" src="/javascripts/index.js"></script>
 </head>
 <body>
-<div class="container">
-    <nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-8">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">
-                    <%= title %>
-                </a>
+    <div class="container">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-inverse" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-8">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">
+                        <%= title %>
+                    </a>
+                </div>
             </div>
-        </div>
-    </nav>
-    <div class="row">
-        <!--<div class="panel panel-default">-->
-            <!--<div class="panel-heading">Panel heading</div>-->
+        </nav>
+        <div class="row">
             <table id="films-table" class="table">
                 <thead>
-                    <tr>
-                        <th class="text-center">Название</th>
-                        <th class="text-center">Описание</th>
-                        <th class="text-center" style="cursor: pointer">Год</th>
-                        <th class="text-center" style="cursor: pointer">Рейтинг</th>
-                        <th class="text-center" style="cursor: pointer">Голоса</th>
-                    </tr>
+                <tr>
+                    <th class="text-center">Название</th>
+                    <th class="text-center">Описание</th>
+                    <th class="text-center" style="cursor: pointer">Год</th>
+                    <th class="text-center" style="cursor: pointer">Рейтинг</th>
+                    <th class="text-center" style="cursor: pointer">Голоса</th>
+                </tr>
                 </thead>
                 <tbody>
                 </tbody>
             </table>
-        <!--</div>-->
-        <!--<div class="col-md-12 text-center">
-            <ul class="pagination">
-                <li class="active"><a href="#">PREV</a></li>
-                <li><a href="#">1</a></li>
-                <li class="active"><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li class="disabled"><a href="#">5</a></li>
-                <li class="active"><a href="#">NEXT</a></li>
-            </ul>
-        </div>-->
+        </div>
     </div>
-</div>
-<!--<h1><%= title %></h1>
-
-<p>Welcome to <%= title %></p>-->
 </body>
 </html>
