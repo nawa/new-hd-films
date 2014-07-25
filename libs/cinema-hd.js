@@ -9,81 +9,81 @@ const CINEMA_HD_URL = 'http://cinema-hd.ru/board/';
 
 var getFilmsFromPage = function (page, lastSyncDate, lastSyncEntry, kinopoiskLoginData, callback) {
     request(CINEMA_HD_URL + '0-' + page, function (err, response, body) {
-        if (err) callback(err);
-        if (!err && response.statusCode == 200) {
-            var $ = cheerio.load(body);
-            var films = $('div[id^="entryID"]').toArray();
-            async.map(films, function (filmElement, mapCallback) {
-                filmElement = $(filmElement);
-                var film = new Film();
-                var kinopoiskId = parseKinopoiskIdFromFilmElement(filmElement);
-                var entryInfo = parseEntryInfo(filmElement);
-                film.cinema_hd_id = entryInfo.entryId;
-                film.cinema_hd_date = entryInfo.entryDate;
-                if (entryInfo.entryId == lastSyncEntry && entryInfo.entryDate == lastSyncDate) {
-                    var err = new Error(entryInfo.entryId + ' already synchronized');
-                    err.interruptError = true;
-                    log.info('Already synchronized entry id = ' + entryInfo.entryId);
-                    mapCallback(err, null);
-                } else {
-                    if (kinopoiskId) {
-                        (function (kinopoiskId, filmElement) {
-                            var options = {
-                                title: true,
-                                year: true,
-                                rating: true,
-                                votes: true,
-                                alternativeTitle: true,
-                                description: true,
-                                type: true,
-                                loginData: kinopoiskLoginData
-                            };
-                            kinopoisk.getById(kinopoiskId, options, function (err, kinopoiskFilm) {
-                                if (err) {
-                                    log.warn(err.message);
-                                } else {
-                                    if (kinopoiskFilm.rating >= config.minRating
-                                        && kinopoiskFilm.votes >= config.minVotes
-                                        && kinopoiskFilm.year >= config.minYear
-                                        && kinopoiskFilm.type == 'film') {
-                                        film.fillFilmFromKinopoisk(kinopoiskFilm);
-                                        film.img = filmElement.find(".eMessage img").attr('src');
-                                    }
-                                }
-                                mapCallback(null, film);
-                            });
-                        })(kinopoiskId, filmElement);
-                    } else {
-                        mapCallback(null, film);
-                    }
-                }
-            }, function (err, result) {
-                if (err) {
-                    if (err.interruptError) {
-                        callback(null, true, result.filter(function (item) {
-                            if (!item) {
-                                return false;
-                            }
-                            if (item.rating) {
-                                return true;
+        if (err) return callback(err);
+        if (response.statusCode != 200) return callback(new Error(CINEMA_HD_URL + '0-' + page + " has returned code " + response.statusCode));
+        var $ = cheerio.load(body);
+        var films = $('div[id^="entryID"]').toArray();
+        async.map(films, function (filmElement, mapCallback) {
+            filmElement = $(filmElement);
+            var film = new Film();
+            var kinopoiskId = parseKinopoiskIdFromFilmElement(filmElement);
+            var entryInfo = parseEntryInfo(filmElement);
+            film.cinema_hd_id = entryInfo.entryId;
+            film.cinema_hd_date = entryInfo.entryDate;
+            if (entryInfo.entryId == lastSyncEntry && entryInfo.entryDate == lastSyncDate) {
+                log.info('Already synchronized entry id = ' + entryInfo.entryId);
+                mapCallback(null, {
+                    lastEntryMarker : true,
+                    cinema_hd_id: entryInfo.entryId
+                });
+            } else {
+                if (kinopoiskId) {
+                    (function (kinopoiskId, filmElement) {
+                        var options = {
+                            title: true,
+                            year: true,
+                            rating: true,
+                            votes: true,
+                            alternativeTitle: true,
+                            description: true,
+                            type: true,
+                            loginData: kinopoiskLoginData
+                        };
+                        kinopoisk.getById(kinopoiskId, options, function (err, kinopoiskFilm) {
+                            if (err) {
+                                log.warn(err.message);
                             } else {
-                                return false;
+                                if (kinopoiskFilm.rating >= config.minRating
+                                    && kinopoiskFilm.votes >= config.minVotes
+                                    && kinopoiskFilm.year >= config.minYear
+                                    && kinopoiskFilm.type == 'film') {
+                                    film.fillFilmFromKinopoisk(kinopoiskFilm);
+                                    film.img = filmElement.find(".eMessage img").attr('src');
+                                }
                             }
-                        }));
-                    } else {
-                        callback(err);
-                    }
+                            mapCallback(null, film);
+                        });
+                    })(kinopoiskId, filmElement);
                 } else {
-                    callback(null, false, result.filter(function (item) {
-                        if (item.rating) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }));
+                    mapCallback(null, film);
+                }
+            }
+        }, function (err, result) {
+            if (err) return callback(err);
+            var resultContainsLastEntry = false;
+            var lastEntryId;
+            result.forEach(function (item) {
+                if(item.lastEntryMarker){
+                    resultContainsLastEntry = true;
+                    lastEntryId = item.cinema_hd_id;
                 }
             });
-        }
+            callback(null, resultContainsLastEntry, result.filter(function (item) {
+                if (!item) {
+                    return false;
+                }
+                //"entryID123" < "entryID234"
+                if(resultContainsLastEntry && item.cinema_hd_id >= lastEntryId){
+                    return false;
+                }
+
+                if (item.rating) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }));
+        });
     });
 };
 
