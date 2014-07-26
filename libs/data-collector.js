@@ -3,7 +3,6 @@ var cronJob = require('cron').CronJob,
     config = require('../config'),
     async = require('async'),
     log = require('./log')(module),
-    mongoose = require('./mongoose'),
     Film = require('../model/film').Film,
     SyncInfo = require('../model/sync-info').SyncInfo,
     kinopoisk = require('kinopoisk-ru');
@@ -34,6 +33,7 @@ var updateData = function () {
             }else{
                 kinopoiskLoginData = loginData;
             }
+
             cinema_hd.getFirstEntryInfo(startPage, function(firstEntryId, firstEntryDate){
                 var series = [];
                 for (var page = startPage; page <= config.cinemahdFirstCount; page++) {
@@ -62,7 +62,7 @@ var updateData = function () {
                     })(page);
                 }
                 async.waterfall(series, function (err, processInterrupted, seriesCallResult) {
-                    if(err) log.error(err);
+                    if(err) return log.error(err);
                     var finished = function(){
                         if(!syncInfo){
                             syncInfo = new SyncInfo();
