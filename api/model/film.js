@@ -5,7 +5,6 @@ var Schema = mongoose.Schema;
 
 var FilmSchema = new Schema({
   cinemaHdId: String,
-  cinemaHdDate: String,
   kinopoiskId: String,
   img: String, //from cinema-hd
   title: String,

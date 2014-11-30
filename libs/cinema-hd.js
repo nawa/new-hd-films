@@ -9,7 +9,7 @@ var request = require('request'),
   kinopoisk = require('kinopoisk-ru');
 var CINEMA_HD_URL = 'http://cinema-hd.ru/board/';
 
-var getFilmsFromPage = function (page, lastSyncDate, lastSyncEntry, kinopoiskLoginData, callback) {
+var getFilmsFromPage = function (page, lastSyncEntryId, kinopoiskLoginData, callback) {
   request(CINEMA_HD_URL + '0-' + page, function (err, response, body) {
     if (err) {
       return callback(err);
@@ -20,60 +20,49 @@ var getFilmsFromPage = function (page, lastSyncDate, lastSyncEntry, kinopoiskLog
     var $ = cheerio.load(body);
     var films = $('div[id^="entryID"]').toArray();
     async.map(films, function (filmElement, mapCallback) {
-      var f = function () {
-        filmElement = $(filmElement);
-        var film = new Film();
-        var kinopoiskId = parseKinopoiskIdFromFilmElement(filmElement);
-        var entryInfo = parseEntryInfo(filmElement);
-        if (!entryInfo.entryDate) {
-          log.warn('Page contains entry without date. id = ' + entryInfo.entryId);
-          return mapCallback(null);
-        }
-        film.cinemaHdId = entryInfo.entryId;
-        film.cinemaHdDate = entryInfo.entryDate;
-        if (entryInfo.entryId === lastSyncEntry && entryInfo.entryDate === lastSyncDate) {
-          log.info('Already synchronized entry id = ' + entryInfo.entryId);
-          mapCallback(null, {
-            lastEntryMarker: true,
-            cinemaHdId: entryInfo.entryId
-          });
-        } else {
-          if (kinopoiskId) {
-            (function (kinopoiskId, filmElement) {
-              var options = {
-                title: true,
-                year: true,
-                rating: true,
-                votes: true,
-                alternativeTitle: true,
-                description: true,
-                type: true,
-                loginData: kinopoiskLoginData
-              };
-              kinopoisk.getById(kinopoiskId, options, function (err, kinopoiskFilm) {
-                if (err) {
-                  log.warn(err.message);
-                } else {
-                  if (kinopoiskFilm.rating >= config.minRating &&
-                    kinopoiskFilm.votes >= config.minVotes &&
-                    kinopoiskFilm.year >= config.minYear &&
-                    kinopoiskFilm.type === 'film') {
-                    film.fillFilmFromKinopoisk(kinopoiskFilm);
-                    film.img = filmElement.find('.eMessage img').attr('src');
-                  }
+      filmElement = $(filmElement);
+      var film = new Film();
+      var kinopoiskId = parseKinopoiskIdFromFilmElement(filmElement);
+      var entryInfo = parseEntryInfo(filmElement);
+      film.cinemaHdId = entryInfo.entryId;
+      if (entryInfo.entryId === lastSyncEntryId) {
+        log.info('Already synchronized entry id = ' + entryInfo.entryId);
+        mapCallback(null, {
+          lastEntryMarker: true,
+          cinemaHdId: entryInfo.entryId
+        });
+      } else {
+        if (kinopoiskId) {
+          (function (kinopoiskId, filmElement) {
+            var options = {
+              title: true,
+              year: true,
+              rating: true,
+              votes: true,
+              alternativeTitle: true,
+              description: true,
+              type: true,
+              loginData: kinopoiskLoginData
+            };
+            kinopoisk.getById(kinopoiskId, options, function (err, kinopoiskFilm) {
+              if (err) {
+                log.warn(err.message);
+              } else {
+                if (kinopoiskFilm.rating >= config.minRating &&
+                  kinopoiskFilm.votes >= config.minVotes &&
+                  kinopoiskFilm.year >= config.minYear &&
+                  kinopoiskFilm.type === 'film') {
+                  film.fillFilmFromKinopoisk(kinopoiskFilm);
+                  film.img = filmElement.find('.poster img').attr('src');
                 }
-                mapCallback(null, film);
-              });
-            })(kinopoiskId, filmElement);
-          } else {
-            mapCallback(null, film);
-          }
+              }
+              mapCallback(null, film);
+            });
+          })(kinopoiskId, filmElement);
+        } else {
+          mapCallback(null, film);
         }
-      };
-      //var delay = Math.floor(Math.random() * (5000)) + 100;
-      //console.info('delay = ' + delay);
-      //setTimeout(f, delay);
-      f();
+      }
     }, function (_, result) {
       var resultContainsLastEntry = false;
       var lastEntryId;
@@ -107,14 +96,13 @@ var getFirstEntryInfo = function (startPage, callback) {
       var $ = cheerio.load(body);
       var firstEntry = $('div[id^="entryID"]')[0];
       var entryInfo = parseEntryInfo($(firstEntry));
-      callback(null, entryInfo.entryId, entryInfo.entryDate);
+      callback(null, entryInfo.entryId);
     }
   });
 };
 
 var parseEntryInfo = function (entry) {
-  var date = entry.find('.item-footer ul li').last().find('span').last().text();
-  return {entryId: entry.attr('id'), entryDate: date};
+  return {entryId: entry.attr('id')};
 };
 
 var parseKinopoiskIdFromFilmElement = function (filmElement) {

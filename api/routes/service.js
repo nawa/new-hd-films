@@ -23,10 +23,7 @@ var receiveData = function (start, length, order, callback) {
     for (var i = 0; i < order.length; i++) {
       switch (order[i].column) {
         case '2':
-          mongoSort.push(
-            ['year', order[i].dir === 'asc' ? 1 : -1],
-            //TODO remove cinemaHdDate
-            ['cinemaHdDate', order[i].dir === 'asc' ? 1 : -1]);
+          mongoSort.push(['year', order[i].dir === 'asc' ? 1 : -1]);
           break;
         case '3':
           mongoSort.push(['rating', order[i].dir === 'asc' ? 1 : -1]);
@@ -39,6 +36,7 @@ var receiveData = function (start, length, order, callback) {
       }
     }
   }
+  mongoSort.push(['cinemaHdId', -1]);
 
   Film.count(query, function (err, count) {
     if (err) {

@@ -22,10 +22,8 @@ var updateData = function (callback) {
       log.error(err);
       return callback(err);
     }
-    var lastSyncDate;
     var lastSyncEntry;
     if (syncInfo) {
-      lastSyncDate = syncInfo.lastDate;
       lastSyncEntry = syncInfo.lastEntry;
     }
     var startPage = 1;
@@ -37,7 +35,7 @@ var updateData = function (callback) {
         kinopoiskLoginData = loginData;
       }
 
-      cinemaHd.getFirstEntryInfo(startPage, function (err, firstEntryId, firstEntryDate) {
+      cinemaHd.getFirstEntryInfo(startPage, function (err, firstEntryId) {
         if (err) {
           log.error('Getting first entry info throws error: ' + err.message);
           return callback(err);
@@ -54,7 +52,7 @@ var updateData = function (callback) {
               seriesCallResult = [];
             }
             if (!processInterrupted) {
-              cinemaHd.getFilmsFromPage(page, lastSyncDate, lastSyncEntry, kinopoiskLoginData,
+              cinemaHd.getFilmsFromPage(page, lastSyncEntry, kinopoiskLoginData,
                 function (err, pageContainsAlreadySynchronizedEntry, result) {
                   if (err) {
                     return callback(err);
@@ -85,7 +83,6 @@ var updateData = function (callback) {
               syncInfo = new SyncInfo();
             }
             syncInfo.lastEntry = firstEntryId;
-            syncInfo.lastDate = firstEntryDate;
             syncInfo.save(function (err) {
               if (err) {
                 log.error(err);

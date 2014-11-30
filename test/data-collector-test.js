@@ -42,26 +42,21 @@ describe('data-collector module', function () {
             SyncInfo.findOne({}, function (err, syncInfo) {
               expect(err).to.be.null;
               expect(syncInfo).to.have.property('lastEntry');
-              expect(syncInfo).to.have.property('lastDate');
               expect(syncInfo.lastEntry).to.be.eq('entryID19157');
-              expect(syncInfo.lastDate).to.be.eq('2014-11-08');
               callback(null);
             });
           },
           checkFilmsCount.bind(this, {}, 3),
           checkFilmsCount.bind(this, {
             kinopoiskId: '772385',
-            cinemaHdDate: '2014-11-03',
             cinemaHdId: 'entryID19142'
           }, 1),
           checkFilmsCount.bind(this, {
             kinopoiskId: '585350',
-            cinemaHdDate: '2014-11-03',
             cinemaHdId: 'entryID19140'
           }, 1),
           checkFilmsCount.bind(this, {
             kinopoiskId: '572035',
-            cinemaHdDate: '2014-11-02',
             cinemaHdId: 'entryID19138'
           }, 1)
         ], callback);
@@ -105,14 +100,14 @@ describe('data-collector module', function () {
       updateAndCheckAllPages);
 
     it('with very old sync info should returns stored films and last sync info', function (done) {
-      var syncInfo = new SyncInfo({lastEntry: 'entryID1', lastDate: '2011-01-01'});
+      var syncInfo = new SyncInfo({lastEntry: 'entryID1'});
       syncInfo.save(function () {
         updateAndCheckAllPages(done);
       });
     });
 
     it('with very even sync info should returns stored films and last sync info', function (done) {
-      var syncInfo = new SyncInfo({lastEntry: 'entryID999999', lastDate: '2020-01-01'});
+      var syncInfo = new SyncInfo({lastEntry: 'entryID999999'});
       syncInfo.save(function () {
         updateAndCheckAllPages(done);
       });
