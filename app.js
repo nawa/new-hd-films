@@ -1,18 +1,20 @@
+'use strict';
+
 var express = require('express');
 var connect = require('connect');
 var path = require('path');
 var config = require('./config');
-var routes = require('./routes/index');
-var serviceRoutes = require('./routes/service');
+var routes = require('./api/routes/index');
+var serviceRoutes = require('./api/routes/service');
 var logger = require('./libs/log')(module);
-var dataCollector = require('./libs/data-collector')
+var dataCollector = require('./libs/data-collector');
 
 var app = express();
 connect.errorHandler.title = config.title;
 var errorHandler = connect.errorHandler();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'client/views'));
 app.set('view engine', 'ejs');
 
 app.use(connect.favicon());
@@ -28,8 +30,8 @@ app.use(connect.urlencoded());
 app.use(connect.cookieParser());
 
 //TODO use minified for production
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'thirdparty')));
+app.use(express.static(path.join(__dirname, 'client/public')));
+app.use(express.static(path.join(__dirname, 'client/thirdparty')));
 
 app.use('/', routes);
 app.use('/service', serviceRoutes);
@@ -59,7 +61,7 @@ app.use(function(err, req, res, next) {
     err.stack = '';
     errorHandler(err, req, res, next);
     //print missed error stack
-    if ('test' != app.get('env')){
+    if ('test' !== app.get('env')){
         logger.error(stack);
     }
 });
