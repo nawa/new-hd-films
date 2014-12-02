@@ -19,7 +19,7 @@ var updateData = function (callback) {
   };
   SyncInfo.findOne({}, function (err, syncInfo) {
     if (err) {
-      log.error(err);
+      log.error('Find syncinfo error. ' + err.message);
       return callback(err);
     }
     var lastSyncEntry;
@@ -40,16 +40,15 @@ var updateData = function (callback) {
           log.error('Getting first entry info throws error: ' + err.message);
           return callback(err);
         }
-        var series = [];
+        var getFilmsFromPageSeries = [];
 
         var closure = function (page) {
           //processInterrupted = true - next entries already synchronized earlier
-          series.push(function (processInterrupted, seriesCallResult, callback) {
-            //first call
+          getFilmsFromPageSeries.push(function (processInterrupted, callback) {
+            //first series call. If processInterrupted is function that means it is callback
             if (typeof processInterrupted === 'function') {
               callback = processInterrupted;
               processInterrupted = false;
-              seriesCallResult = [];
             }
             if (!processInterrupted) {
               cinemaHd.getFilmsFromPage(page, lastSyncEntry, kinopoiskLoginData,
@@ -57,14 +56,24 @@ var updateData = function (callback) {
                   if (err) {
                     return callback(err);
                   }
-                  for (var i = 0; i < result.length; i++) {
-                    seriesCallResult.push(result[i]);
-                  }
-                  log.info(page / config.cinemahdFirstCount * 100 + '%');
-                  callback(null, pageContainsAlreadySynchronizedEntry, seriesCallResult);
+                  async.each(result, function (film, callback) {
+                    film.save(function (err) {
+                      if (err) {
+                        return callback(err);
+                      }
+                      log.info('Film with id ' + film.kinopoiskId + ' successfully saved to db');
+                      callback(null);
+                    });
+                  }, function (err) {
+                    if (err) {
+                      return callback(err);
+                    }
+                    log.info(page / config.cinemahdFirstCount * 100 + '%');
+                    callback(null, pageContainsAlreadySynchronizedEntry);
+                  });
                 });
             } else {
-              callback(null, processInterrupted, seriesCallResult);
+              callback(null, processInterrupted);
             }
           });
         };
@@ -73,46 +82,23 @@ var updateData = function (callback) {
           //closure was moved outside the loop to avoid bug 'Don't make functions within a loop.'
           closure(page);
         }
-        async.waterfall(series, function (err, processInterrupted, seriesCallResult) {
+        async.waterfall(getFilmsFromPageSeries, function (err) {
           if (err) {
-            log.error(err);
+            log.error('getFilmsFromPageSeries execution error. ' + err.message);
             return callback(err);
           }
-          var finished = function (callback) {
-            if (!syncInfo) {
-              syncInfo = new SyncInfo();
-            }
-            syncInfo.lastEntry = firstEntryId;
-            syncInfo.save(function (err) {
-              if (err) {
-                log.error(err);
-                return callback(err);
-              }
-              log.info('Synchronization finished');
-              callback(null);
-            });
-          };
-          if (seriesCallResult.length > 0) {
-            var closure = function (film, i) {
-              film.save(function (err) {
-                if (err) {
-                  return callback(err);
-                }
-                log.info('Film with id ' + film.kinopoiskId + ' successfully saved to db');
-                if (i === seriesCallResult.length - 1) {
-                  return finished(callback);
-                }
-              });
-            };
-
-            for (var i = 0; i < seriesCallResult.length; i++) {
-              var film = seriesCallResult[i];
-              //closure was moved outside the loop to avoid bug 'Don't make functions within a loop.'
-              closure(film, i);
-            }
-          } else {
-            finished(callback);
+          if (!syncInfo) {
+            syncInfo = new SyncInfo();
           }
+          syncInfo.lastEntry = firstEntryId;
+          syncInfo.save(function (err) {
+            if (err) {
+              log.error('Save syncinfo error. ' + err.message);
+              return callback(err);
+            }
+            log.info('Synchronization finished');
+            callback(null);
+          });
         });
       });
     });
