@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "grunt test"
   },
   "dependencies": {
     "async": "^0.9.0",
@@ -17,7 +18,8 @@
     "mongoose": "^3.8.12",
     "nconf": "^0.6.9",
     "request": "^2.36.0",
-    "winston": "^0.7.3"
+    "winston": "^0.7.3",
+    "array.prototype.findindex": "^1.0.0"
   },
   "devDependencies": {
     "chai": "^1.9.1",

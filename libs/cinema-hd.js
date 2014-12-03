@@ -8,6 +8,7 @@ var request = require('request'),
   config = require('../config'),
   kinopoisk = require('kinopoisk-ru');
 var CINEMA_HD_URL = 'http://cinema-hd.ru/board/';
+require('array.prototype.findindex');
 
 var getFilmsFromPage = function (page, lastSyncEntryId, kinopoiskLoginData, callback) {
   request(CINEMA_HD_URL + '0-' + page, function (err, response, body) {
@@ -27,10 +28,7 @@ var getFilmsFromPage = function (page, lastSyncEntryId, kinopoiskLoginData, call
       film.cinemaHdId = entryInfo.entryId;
       if (entryInfo.entryId === lastSyncEntryId) {
         log.info('Already synchronized entry id = ' + entryInfo.entryId);
-        mapCallback(null, {
-          lastEntryMarker: true,
-          cinemaHdId: entryInfo.entryId
-        });
+        mapCallback(null, 'lastEntryMarker');
       } else {
         if (kinopoiskId) {
           (function (kinopoiskId, filmElement) {
@@ -64,20 +62,14 @@ var getFilmsFromPage = function (page, lastSyncEntryId, kinopoiskLoginData, call
         }
       }
     }, function (_, result) {
-      var resultContainsLastEntry = false;
-      var lastEntryId;
-      result.forEach(function (item) {
-        if (item && item.lastEntryMarker) {
-          resultContainsLastEntry = true;
-          lastEntryId = item.cinemaHdId;
-        }
+      var lastEntryIndex = result.findIndex(function (item) {
+        return item === 'lastEntryMarker';
       });
-      callback(null, resultContainsLastEntry, result.filter(function (item) {
+      callback(null, lastEntryIndex !== -1, result.filter(function (item, index) {
         if (!item) {
           return false;
         }
-        //"entryID123" < "entryID234"
-        if (resultContainsLastEntry && item.cinemaHdId >= lastEntryId) {
+        if (lastEntryIndex != -1 && index >= lastEntryIndex) {
           return false;
         }
         return !!item.rating;
