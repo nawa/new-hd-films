@@ -1,0 +1,11 @@
+language: node_js
+node_js:
+- '0.11'
+- '0.10'
+deploy:
+  provider: heroku
+  api_key:
+    secure: NKVVxTQJMcGXyKxzigq2Qg32Z+5v6hIrMYFhg/GQdAQHAFzr53OJ6/VvZ0qAxukVb/nSHOGmO3lCWA6ea0zcqImy5oPpdJShI9WdlP+nkGV3hoLL0cNXCxOSa48XSMWjRXMEKBLSfBNZgytcdx83+lM35CvzwSlhK8EMxYpGXZQ=
+  app: new-hd-films
+  on:
+    repo: Nawa/new-hd-films

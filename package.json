@@ -6,6 +6,10 @@
     "start": "node ./bin/www",
     "test": "grunt test"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nawa/new-hd-films"
+  },
   "dependencies": {
     "async": "^0.9.0",
     "cheerio": "^0.17.0",

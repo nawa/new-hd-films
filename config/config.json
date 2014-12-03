@@ -5,7 +5,7 @@
     "title": "New HD films",
     "minRating": 7,
     "minVotes": 3000,
-    "minYear": 2012,
+    "minYear": 2010,
     "mongoose": {
       "uri": "mongodb://localhost/newHdFilms",
       "options": {
@@ -17,9 +17,28 @@
       }
     }
   },
+
   "production": {
     "defaultPort": 80,
-    "cinemahdFirstCount": 2000,
+    "cinemahdFirstCount": 1200,
+    "title": "New HD films",
+    "minRating": 7,
+    "minVotes": 3000,
+    "minYear": 2010,
+    "mongoose": {
+      "options": {
+        "server": {
+          "socketOptions": {
+            "keepAlive": 1
+          }
+        }
+      }
+    }
+  },
+
+  "test": {
+    "defaultPort": 3000,
+    "cinemahdFirstCount": 3,
     "title": "New HD films",
     "minRating": 7,
     "minVotes": 3000,
