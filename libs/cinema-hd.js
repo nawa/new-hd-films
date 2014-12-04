@@ -69,7 +69,7 @@ var getFilmsFromPage = function (page, lastSyncEntryId, kinopoiskLoginData, call
         if (!item) {
           return false;
         }
-        if (lastEntryIndex != -1 && index >= lastEntryIndex) {
+        if (lastEntryIndex !== -1 && index >= lastEntryIndex) {
           return false;
         }
         return !!item.rating;

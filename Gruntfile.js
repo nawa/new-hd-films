@@ -31,14 +31,17 @@ module.exports = function (grunt) {
       dev: {
         NODE_ENV: 'development'
       },
-      test: {
-        NODE_ENV: 'test'
-      },
       prod: {
         NODE_ENV: 'production'
       },
+      test: {
+        NODE_ENV: 'test'
+      },
+      testLocal: {
+        NODE_ENV: 'testLocal'
+      },
       coverage: {
-        NODE_ENV: 'test',
+        NODE_ENV: 'testLocal',
         APP_DIR_FOR_CODE_COVERAGE: '../coverage/instrument/'
       }
     },
@@ -123,6 +126,7 @@ module.exports = function (grunt) {
   grunt.registerTask('server', ['concurrent:target']);
   grunt.registerTask('default', ['env:dev', 'jshint', 'server']);
   grunt.registerTask('test', ['env:test', 'mochaTest:unit', 'mochaTest:routes', 'env:dev']);
+  grunt.registerTask('testLocal', ['env:testLocal', 'mochaTest:unit', 'mochaTest:routes', 'env:dev']);
   grunt.registerTask('coverage',
     ['jshint', 'clean', 'copy:configs', 'copy:views', 'env:coverage',
       'instrument', 'mochaTest:unit', 'mochaTest:routes',
